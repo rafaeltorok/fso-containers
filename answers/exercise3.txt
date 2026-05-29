@@ -1,0 +1,6 @@
+```bash
+root@86c698b56fcd:/# apt update && apt install vim
+root@86c698b56fcd:/# vim /usr/src/app/index.js
+root@86c698b56fcd:/# cat /usr/src/app/index.js 
+console.log('Hello World');
+```
