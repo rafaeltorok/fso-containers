@@ -1,0 +1,54 @@
+The container was build using Docker Composer for the orchestration,
+it builds all 3 containers for the todo-backend, redis and mongodb
+
+```bash
+$ docker exec -it todo-app-mongodb-1 bash
+
+root@b0fce03465ff:/# mongosh "mongodb://localhost:27017/the_database" --apiVersion 1 --username the_username
+Enter password: ************
+Current Mongosh Log ID:	6a1ae04a1e84cac2798de665
+Connecting to:		mongodb://<credentials>@localhost:27017/the_database?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.5.10
+Using MongoDB:		8.2.3 (API Version 1)
+Using Mongosh:		2.5.10
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+the_database> db.todos.find()
+[
+  {
+    _id: ObjectId('6a1adac801fbe251ba8de666'),
+    text: 'Write code',
+    done: true
+  },
+  {
+    _id: ObjectId('6a1adac801fbe251ba8de667'),
+    text: 'Learn about containers',
+    done: false
+  }
+]
+
+the_database> db.todos.insertOne({ title: "Increase the number of tools in my tool belt", done: false })
+{
+  acknowledged: true,
+  insertedId: ObjectId('6a1ae1fe1e84cac2798de666')
+}
+
+the_database> db.todos.find()
+[
+  {
+    _id: ObjectId('6a1adac801fbe251ba8de666'),
+    text: 'Write code',
+    done: true
+  },
+  {
+    _id: ObjectId('6a1adac801fbe251ba8de667'),
+    text: 'Learn about containers',
+    done: false
+  },
+  {
+    _id: ObjectId('6a1ae1fe1e84cac2798de666'),
+    title: 'Increase the number of tools in my tool belt',
+    done: false
+  }
+]
+```
