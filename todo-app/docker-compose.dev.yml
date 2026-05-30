@@ -33,6 +33,7 @@ services:
       REDIS_URL: redis://redis:6379
     volumes:
       - ./todo-backend:/usr/src/app
+      - /usr/src/app/node_modules
     networks:
       - todo-app-network
 
