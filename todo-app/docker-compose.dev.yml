@@ -13,6 +13,8 @@ services:
       - ./todo-backend/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
 
   redis:
+    depends_on:
+      - mongodb
     image: redis
     ports:
       - 6379:6379
