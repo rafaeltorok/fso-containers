@@ -1,10 +1,10 @@
 services:
-  mongodb:
+  dev-mongodb:
     image: mongo
     ports:
       - 3456:27017
     networks:
-      - todo-app-network
+      - dev-network
     environment:
       - MONGO_INITDB_ROOT_USERNAME=the_username
       - MONGO_INITDB_ROOT_PASSWORD=the_password
@@ -12,33 +12,49 @@ services:
     volumes:
       - ./todo-backend/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
 
-  redis:
+  dev-redis:
     depends_on:
-      - mongodb
+      - dev-mongodb
     image: redis
     ports:
       - 6379:6379
     networks:
-      - todo-app-network
+      - dev-network
 
-  server:
+  dev-server:
     depends_on:
-      - mongodb
-      - redis
+      - dev-mongodb
+      - dev-redis
     build:
       context: ./todo-backend
       dockerfile: Dockerfile.dev
     ports:
       - 3000:3000
     environment:
-      MONGO_URL: mongodb://the_username:the_password@mongodb:27017/the_database
-      REDIS_URL: redis://redis:6379
+      MONGO_URL: mongodb://the_username:the_password@dev-mongodb:27017/the_database
+      REDIS_URL: redis://dev-redis:6379
     volumes:
-      - ./todo-backend:/usr/src/app
+      - ./todo-backend:/usr/src/app/todo-backend
       - /usr/src/app/node_modules
     networks:
-      - todo-app-network
+      - dev-network
+
+  dev-client:
+    depends_on:
+      - dev-server
+    build:
+      context: ./todo-frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - 5173:5173
+    environment:
+      - VITE_BACKEND_URL=http://localhost:3000
+    volumes:
+      - ./todo-frontend:/usr/src/app/todo-frontend
+      - /usr/src/app/node_modules
+    networks:
+      - dev-network
 
 networks:
-  todo-app-network:
+  dev-network:
     driver: bridge
