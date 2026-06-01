@@ -11,14 +11,18 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=the_password
       - MONGO_INITDB_DATABASE=the_database
     volumes:
-      - ./mongo_data:/data/db
+      - ./mongo_data:/data/db   # Persists the MongoDB data
 
   redis:
+    depends_on:
+      - mongodb
     image: redis
     ports:
       - 6379:6379
     networks:
       - todo-app-network
+    volumes:
+      - ./redis_data:/data  # Persists Redis data
 
   server:
     depends_on:
