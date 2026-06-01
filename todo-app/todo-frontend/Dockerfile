@@ -1,0 +1,22 @@
+# Build stage
+FROM node:20-alpine AS build
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN npm ci
+RUN npm run build
+
+# Production stage
+FROM nginx:stable-alpine AS production
+
+# Copy custom Nginx config
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy the static build
+COPY --from=build /usr/src/app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

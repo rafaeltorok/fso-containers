@@ -1,6 +1,7 @@
 services:
   dev-mongodb:
     image: mongo
+    container_name: todo-dev-mongodb
     ports:
       - 3456:27017
     networks:
@@ -16,6 +17,7 @@ services:
     depends_on:
       - dev-mongodb
     image: redis
+    container_name: todo-dev-redis
     ports:
       - 6379:6379
     networks:
@@ -28,11 +30,12 @@ services:
     build:
       context: ./todo-backend
       dockerfile: Dockerfile.dev
+    container_name: todo-dev-server
     ports:
       - 3000:3000
     environment:
-      MONGO_URL: mongodb://the_username:the_password@dev-mongodb:27017/the_database
-      REDIS_URL: redis://dev-redis:6379
+      MONGO_URL: mongodb://the_username:the_password@todo-dev-mongodb:27017/the_database
+      REDIS_URL: redis://todo-dev-redis:6379
     volumes:
       - ./todo-backend:/usr/src/app/todo-backend
       - /usr/src/app/node_modules
@@ -45,10 +48,11 @@ services:
     build:
       context: ./todo-frontend
       dockerfile: Dockerfile.dev
+    container_name: todo-dev-client
     ports:
       - 5173:5173
     environment:
-      - VITE_BACKEND_URL=http://localhost:3000
+      - VITE_BACKEND_URL=http://dev-server:3000
     volumes:
       - ./todo-frontend:/usr/src/app/todo-frontend
       - /usr/src/app/node_modules
