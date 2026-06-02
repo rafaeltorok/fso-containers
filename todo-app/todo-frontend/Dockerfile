@@ -3,9 +3,16 @@ FROM node:20-alpine AS build
 
 WORKDIR /usr/src/app
 
-COPY . .
+# Install dependencies
+COPY ./package*.json .
 
 RUN npm ci
+
+# Copy the source code
+COPY . .
+
+# Run the component tests before the production build
+RUN npm run test:run
 RUN npm run build
 
 # Production stage
