@@ -4,6 +4,7 @@
 - [About](#about)
 - [Usage](#usage)
 - [E2E tests](#e2e-tests)
+- [Component tests](#component-tests)
 
 
 ## About
@@ -62,4 +63,34 @@ docker compose -f ./docker-compose.test.yml up --build --abort-on-container-exit
 Cleanup after the tests
 ```bash
 docker compose -f ./docker-compose.test.yml down -v
+```
+
+
+## Component tests
+
+The tests were implemented with Vitest + React Testing Library.
+
+Enter the frontend folder
+```bash
+cd ./todo-app/todo-frontend
+```
+
+Run in watch mode
+```bash
+npm run test
+```
+
+Run the suites only once
+```bash
+npm run test:run
+```
+
+UI mode
+```bash
+npm run test:ui
+```
+
+Get the current test coverage
+```bash
+npm run coverage
 ```
