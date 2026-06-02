@@ -1,0 +1,101 @@
+services:
+  mongodb:
+    build:
+      dockerfile: ./mongodb/Dockerfile
+    container_name: todo-test-mongodb
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    ports:
+      - 3456:27017
+    networks:
+      - todo-test-network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=the_username
+      - MONGO_INITDB_ROOT_PASSWORD=the_password
+      - MONGO_INITDB_DATABASE=the_database
+
+  redis:
+    image: redis
+    container_name: todo-test-redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    ports:
+      - 6379:6379
+    networks:
+      - todo-test-network
+
+  server:
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    build:
+      context: ./todo-backend
+      dockerfile: Dockerfile
+    container_name: todo-app-server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      - 3000:3000
+    environment:
+      MONGO_URL: mongodb://the_username:the_password@mongodb:27017/the_database
+      REDIS_URL: redis://redis:6379
+    networks:
+      - todo-test-network
+
+  client:
+    depends_on:
+      server:
+        condition: service_healthy
+    build:
+      context: ./todo-frontend
+      dockerfile: Dockerfile
+    container_name: todo-app-client
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    ports:
+      - 8000:80
+    environment:
+      - VITE_BACKEND_URL=http://server:3000
+    networks:
+      - todo-test-network
+
+  e2e-test:
+    depends_on:
+      client:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    build:
+      context: ./todo-tests
+      dockerfile: Dockerfile
+    container_name: todo-app-tests
+    networks:
+      - todo-test-network
+    environment:
+      BASE_URL: http://client:80
+    volumes:
+      # Persists tests results and reports
+      - ./todo-tests/test-results:/todo-tests/test-results
+      - ./todo-tests/playwright-report:/todo-tests/playwright-report
+
+networks:
+  todo-test-network:
+    driver: bridge

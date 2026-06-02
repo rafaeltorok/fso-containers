@@ -3,6 +3,7 @@
 ## Table of Contents
 - [About](#about)
 - [Usage](#usage)
+- [E2E tests](#e2e-tests)
 
 
 ## About
@@ -43,3 +44,18 @@ Access:
 
 - Web UI on http://localhost:8000
 - CRUD operations on http://localhost:3000
+
+
+## E2E tests
+
+**Note**: it is recommended to run the Playwright testing suite with Docker Composer for simplicity.
+
+Run the tests orchestration script
+```bash
+docker compose -f ./docker-compose.test.yml up --build --abort-on-container-exit
+```
+
+Cleanup after the tests
+```bash
+docker compose -f ./docker-compose.test.yml down -v
+```
