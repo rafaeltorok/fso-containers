@@ -14,7 +14,7 @@ app.use(logger("dev"));
 app.use(express.json());
 
 app.use("/", indexRouter);
-app.use("/todos", todosRouter);
-app.use("/statistics", statisticsRouter);
+app.use("/api/todos", todosRouter);
+app.use("/api/statistics", statisticsRouter);
 
 module.exports = app;
