@@ -1,6 +1,6 @@
 @font-face {
-  font-family: 'SuperKindly';
-  src: url('/public/fonts/SuperKindly-drE8E.ttf') format('truetype');
+  font-family: "SuperKindly";
+  src: url("/public/fonts/SuperKindly-drE8E.ttf") format("truetype");
 }
 
 #root {
@@ -8,7 +8,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  font-family: 'SuperKindly', sans-serif;
+  font-family: "SuperKindly", sans-serif;
 }
 
 body {
@@ -20,7 +20,7 @@ body {
   font-size: 4rem;
 }
 
-.todo-item { 
+.todo-item {
   display: flex;
   justify-content: space-between;
   max-width: 70%;
