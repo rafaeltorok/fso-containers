@@ -5,7 +5,7 @@ const { get } = require("../redis/index");
 router.get("/", async (_, res) => {
   const totalTodos = await get("added_todos");
   return res.json({
-    added_todos: totalTodos,
+    added_todos: Number(totalTodos),
   });
 });
 
