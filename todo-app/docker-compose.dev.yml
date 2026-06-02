@@ -3,11 +3,7 @@ services:
     image: mongo
     container_name: todo-dev-mongodb
     healthcheck:
-      test: [
-        "CMD", "mongosh", "--eval", "db.adminCommand('ping')", 
-        "--username", "the_username",
-        "--password", "the_password"
-      ]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 30s
       timeout: 10s
       retries: 3
