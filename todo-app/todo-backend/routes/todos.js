@@ -1,10 +1,10 @@
-const express = require('express');
-const { Todo } = require('../mongo')
+const express = require("express");
+const { Todo } = require("../mongo");
 const router = express.Router();
 const { get, set } = require("../redis/index");
 
 /* GET todos listing. */
-router.get('/', async (_, res) => {
+router.get("/", async (_, res) => {
   try {
     const todos = await Todo.find({});
     res.send(todos);
@@ -14,12 +14,12 @@ router.get('/', async (_, res) => {
 });
 
 /* POST todo to listing. */
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const todo = await Todo.create({
       text: req.body.text,
-      done: false
-    })
+      done: false,
+    });
     const totalTodos = await get("added_todos");
     await set("added_todos", Number(totalTodos) + 1);
     res.send(todo);
@@ -31,15 +31,15 @@ router.post('/', async (req, res) => {
 const singleRouter = express.Router();
 
 const findByIdMiddleware = async (req, res, next) => {
-  const { id } = req.params
-  req.todo = await Todo.findById(id)
-  if (!req.todo) return res.sendStatus(404)
+  const { id } = req.params;
+  req.todo = await Todo.findById(id);
+  if (!req.todo) return res.sendStatus(404);
 
-  next()
-}
+  next();
+};
 
 /* DELETE todo. */
-singleRouter.delete('/', async (req, res) => {
+singleRouter.delete("/", async (req, res) => {
   try {
     await req.todo.deleteOne();
     const totalTodos = await get("added_todos");
@@ -51,12 +51,12 @@ singleRouter.delete('/', async (req, res) => {
 });
 
 /* GET todo. */
-singleRouter.get('/', async (req, res) => {
+singleRouter.get("/", async (req, res) => {
   res.send(req.todo);
 });
 
 /* PUT todo. */
-singleRouter.put('/', async (req, res) => {
+singleRouter.put("/", async (req, res) => {
   try {
     if (req.body.text !== undefined) {
       req.todo.text = req.body.text;
@@ -74,7 +74,6 @@ singleRouter.put('/', async (req, res) => {
   }
 });
 
-router.use('/:id', findByIdMiddleware, singleRouter)
-
+router.use("/:id", findByIdMiddleware, singleRouter);
 
 module.exports = router;
