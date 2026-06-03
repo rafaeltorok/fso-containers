@@ -3,6 +3,7 @@
 ## Table of Contents
 - [About](#about)
 - [Usage](#usage)
+- [CRUD operations](#crud-operations)
 - [E2E tests](#e2e-tests)
 - [Component tests](#component-tests)
 
@@ -36,7 +37,6 @@ docker compose -f ./docker-compose.dev.yml up --build
 Access:
 
 - Web UI on http://localhost:5173
-- CRUD operations on http://localhost:3000
 
 ### Production build
 
@@ -48,7 +48,46 @@ docker compose up --build
 Access:
 
 - Web UI on http://localhost:8000
-- CRUD operations on http://localhost:3000
+
+
+## CRUD operations
+
+**Note**: all Composer orchestrations use the server address http://localhost:3000
+
+- Get info about the MONGO_URL, REDIS_URL and visits counter
+  ```bash
+  curl -X GET http://localhost:3000/info
+  ```
+
+- Server health check
+  ```bash
+  curl -X GET http://localhost:3000/health
+  ```
+
+- Statistics about the total number of todos
+  ```bash
+  curl -X GET http://localhost:3000/api/statistics
+  ```
+
+- GET all todos
+  ```bash
+  curl -X GET http://localhost:3000/api/todos
+  ```
+
+- POST a new todo
+  ```bash
+  curl -X POST http://localhost:3000/api/todos -H "Content-Type: application/json" --data '{ "text": "Use curl to add a new todo", "done": true }'
+  ```
+
+- PUT (update) a todo
+  ```bash
+  curl -X PUT http://localhost:3000/api/todos/:id -H "Content-Type: application/json" --data '{ "done": true }'
+  ```
+
+- DELETE a todo
+  ```bash
+  curl -X DELETE http://localhost:3000/api/todos/:id
+  ```
 
 
 ## E2E tests
