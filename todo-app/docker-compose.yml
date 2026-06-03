@@ -3,12 +3,6 @@ services:
     build:
       dockerfile: ./mongodb/Dockerfile
     container_name: todo-app-mongodb
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
     ports:
       - 3456:27017
     networks:
@@ -19,22 +13,28 @@ services:
       - MONGO_INITDB_DATABASE=the_database
     volumes:
       - ./mongo_data:/data/db   # Persists the MongoDB data
-
-  redis:
-    image: redis
-    container_name: todo-app-redis
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 30s
+
+  redis:
+    image: redis
+    container_name: todo-app-redis
     ports:
       - 6379:6379
     networks:
       - todo-app-network
     volumes:
       - ./redis_data:/data  # Persists Redis data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   server:
     depends_on:
@@ -53,10 +53,17 @@ services:
       REDIS_URL: redis://redis:6379
     networks:
       - todo-app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   client:
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     build:
       context: ./todo-frontend
       dockerfile: Dockerfile
@@ -67,6 +74,12 @@ services:
       - VITE_BACKEND_URL=http://server:3000
     networks:
       - todo-app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 networks:
   todo-app-network:
