@@ -1,7 +1,8 @@
 services:
   mongodb:
     build:
-      dockerfile: ./mongodb/Dockerfile
+      context: ./mongodb
+      dockerfile: Dockerfile
     container_name: todo-app-mongodb
     ports:
       - 3456:27017
@@ -46,8 +47,6 @@ services:
       context: ./todo-backend
       dockerfile: Dockerfile
     container_name: todo-app-server
-    ports:
-      - 3000:3000
     environment:
       MONGO_URL: mongodb://the_username:the_password@mongodb:27017/the_database
       REDIS_URL: redis://redis:6379
@@ -60,20 +59,22 @@ services:
       retries: 3
       start_period: 30s
 
-  client:
+  nginx:
     depends_on:
       server:
         condition: service_healthy
     build:
       context: ./todo-frontend
       dockerfile: Dockerfile
-    container_name: todo-app-client
+    container_name: todo-app-nginx
     ports:
       - 8000:80
     environment:
       - VITE_BACKEND_URL=http://server:3000
     networks:
       - todo-app-network
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s

@@ -18,9 +18,6 @@ RUN npm run build
 # Production stage
 FROM nginx:stable-alpine AS production
 
-# Copy custom Nginx config
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-
 # Copy the static build
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
 
