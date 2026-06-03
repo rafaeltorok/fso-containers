@@ -84,6 +84,12 @@ services:
       retries: 3
       start_period: 30s
 
+  debug-helper:
+    image: busybox
+    container_name: todo-debug-helper
+    networks:
+      - dev-network
+
 networks:
   dev-network:
     driver: bridge
