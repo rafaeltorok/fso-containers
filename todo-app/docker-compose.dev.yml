@@ -2,12 +2,6 @@ services:
   dev-mongodb:
     image: mongo
     container_name: todo-dev-mongodb
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
     ports:
       - 3456:27017
     networks:
@@ -18,20 +12,26 @@ services:
       - MONGO_INITDB_DATABASE=the_database
     volumes:
       - ./todo-backend/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   dev-redis:
     image: redis
     container_name: todo-dev-redis
+    ports:
+      - 6379:6379
+    networks:
+      - dev-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 30s
-    ports:
-      - 6379:6379
-    networks:
-      - dev-network
 
   dev-server:
     depends_on:
@@ -53,10 +53,17 @@ services:
       - /usr/src/app/node_modules
     networks:
       - dev-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   dev-client:
     depends_on:
-      - dev-server
+      dev-server:
+        condition: service_healthy
     build:
       context: ./todo-frontend
       dockerfile: Dockerfile.dev
@@ -70,6 +77,12 @@ services:
       - /usr/src/app/node_modules
     networks:
       - dev-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 networks:
   dev-network:
