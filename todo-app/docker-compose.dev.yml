@@ -43,8 +43,6 @@ services:
       context: ./todo-backend
       dockerfile: Dockerfile.dev
     container_name: todo-dev-server
-    ports:
-      - 3000:3000
     environment:
       MONGO_URL: mongodb://the_username:the_password@todo-dev-mongodb:27017/the_database
       REDIS_URL: redis://todo-dev-redis:6379
@@ -68,10 +66,8 @@ services:
       context: ./todo-frontend
       dockerfile: Dockerfile.dev
     container_name: todo-dev-client
-    ports:
-      - 5173:5173
     environment:
-      - VITE_BACKEND_URL=http://dev-server:3000
+      - VITE_BACKEND_URL=http://localhost:8000
     volumes:
       - ./todo-frontend:/usr/src/app/todo-frontend
       - /usr/src/app/node_modules
@@ -79,6 +75,27 @@ services:
       - dev-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+  
+  dev-nginx:
+    depends_on:
+      dev-client:
+        condition: service_healthy
+      dev-server:
+        condition: service_healthy
+    image: nginx:stable-alpine
+    container_name: todo-dev-nginx-proxy
+    ports:
+      - 8000:80
+    networks:
+      - dev-network
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s
       timeout: 10s
       retries: 3
