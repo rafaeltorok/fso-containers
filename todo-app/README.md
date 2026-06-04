@@ -98,7 +98,7 @@ docker compose down -v
 
 ## E2E tests
 
-**Note**: it is recommended to run the Playwright testing suite with Docker Composer for simplicity.
+**Note**: the Playwright testing suite was designed to run with Docker Composer only.
 
 Run the tests orchestration script
 ```bash
@@ -113,29 +113,29 @@ docker compose -f ./docker-compose.test.yml down -v
 
 ## Component tests
 
-The tests were implemented with Vitest + React Testing Library.
+**The tests were implemented with Vitest + React Testing Library.**
 
-Enter the frontend folder
-```bash
-cd ./todo-app/todo-frontend
-```
+- Enter the frontend folder
+  ```bash
+  cd ./todo-app/todo-frontend
+  ```
 
-Run in watch mode
-```bash
-npm run test
-```
+- Run in watch mode
+  ```bash
+  npm run test
+  ```
 
-Run the suites only once
-```bash
-npm run test:run
-```
+- Run the suites only once
+  ```bash
+  npm run test:run
+  ```
 
-UI mode
-```bash
-npm run test:ui
-```
+- UI mode
+  ```bash
+  npm run test:ui
+  ```
 
-Get the current test coverage
-```bash
-npm run coverage
-```
+- Get the current test coverage
+  ```bash
+  npm run coverage
+  ```
