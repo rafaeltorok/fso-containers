@@ -14,10 +14,17 @@
 body {
   background-color: #222222;
   color: white;
+  min-width: 300px;
 }
 
 .main-title {
   font-size: 4rem;
+  background-color: black;
+  border: 2px solid #252525;
+  padding: 0.5rem 0;
+  border-radius: 1rem;
+  width: 300px;
+  margin: 1rem auto;
 }
 
 .todo-item {
@@ -31,9 +38,20 @@ body {
   text-decoration: line-through;
 }
 
+.input-form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-form input,
+.input-form button {
+  height: 30px;
+}
+
 input,
 button {
-  padding: 0.2rem;
   font-family: inherit;
 }
 
@@ -41,6 +59,9 @@ input {
   background-color: black;
   color: white;
   margin: 1rem 0;
+  width: 350px;
+  min-width: 250px;
+  max-width: 80%;
 }
 
 button {
