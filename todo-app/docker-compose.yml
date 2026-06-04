@@ -1,8 +1,8 @@
 services:
   mongodb:
     build:
-      context: ./mongodb
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: ./mongodb/Dockerfile
     container_name: todo-app-mongodb
     ports:
       - 3456:27017
