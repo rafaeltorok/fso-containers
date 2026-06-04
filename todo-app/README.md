@@ -34,7 +34,7 @@ Start the development composer orchestration
 docker compose -f ./docker-compose.dev.yml up --build
 ```
 
-Access the Web UI on http://localhost:8000
+Access the Web UI on http://localhost:8080
 
 Cleanup
 ```bash
@@ -48,7 +48,7 @@ Start the containers
 docker compose up --build
 ```
 
-Access the Web UI on http://localhost:8000
+Access the Web UI on http://localhost:8080
 
 Cleanup
 ```bash
@@ -58,41 +58,41 @@ docker compose down -v
 
 ## CRUD operations
 
-**Note**: All backend server requests go through the Nginx reverse proxy on port `8000`.
+**Note**: All backend server requests go through the Nginx reverse proxy on port `8080`.
 
 - Get info about the MONGO_URL, REDIS_URL and visits counter
   ```bash
-  curl -X GET http://localhost:8000/info
+  curl -X GET http://localhost:8080/info
   ```
 
 - Server health check
   ```bash
-  curl -X GET http://localhost:8000/health
+  curl -X GET http://localhost:8080/health
   ```
 
 - Statistics about the total number of todos
   ```bash
-  curl -X GET http://localhost:8000/api/statistics
+  curl -X GET http://localhost:8080/api/statistics
   ```
 
 - GET all todos
   ```bash
-  curl -X GET http://localhost:8000/api/todos
+  curl -X GET http://localhost:8080/api/todos
   ```
 
 - POST a new todo
   ```bash
-  curl -X POST http://localhost:8000/api/todos -H "Content-Type: application/json" --data '{ "text": "Use curl to add a new todo", "done": true }'
+  curl -X POST http://localhost:8080/api/todos -H "Content-Type: application/json" --data '{ "text": "Use curl to add a new todo", "done": true }'
   ```
 
 - PUT (update) a todo
   ```bash
-  curl -X PUT http://localhost:8000/api/todos/:id -H "Content-Type: application/json" --data '{ "done": true }'
+  curl -X PUT http://localhost:8080/api/todos/:id -H "Content-Type: application/json" --data '{ "done": true }'
   ```
 
 - DELETE a todo
   ```bash
-  curl -X DELETE http://localhost:8000/api/todos/:id
+  curl -X DELETE http://localhost:8080/api/todos/:id
   ```
 
 

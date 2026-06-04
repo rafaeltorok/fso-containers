@@ -33,7 +33,7 @@ services:
       retries: 3
       start_period: 30s
 
-  dev-server:
+  dev-backend:
     depends_on:
       dev-mongodb:
         condition: service_healthy
@@ -42,7 +42,8 @@ services:
     build:
       context: ./todo-backend
       dockerfile: Dockerfile.dev
-    container_name: todo-dev-server
+    image: todo-dev-backend
+    container_name: todo-dev-backend
     environment:
       MONGO_URL: mongodb://the_username:the_password@todo-dev-mongodb:27017/the_database
       REDIS_URL: redis://todo-dev-redis:6379
@@ -58,16 +59,17 @@ services:
       retries: 3
       start_period: 30s
 
-  dev-client:
+  dev-front:
     depends_on:
-      dev-server:
+      dev-backend:
         condition: service_healthy
     build:
       context: ./todo-frontend
       dockerfile: Dockerfile.dev
-    container_name: todo-dev-client
+    image: todo-dev-front
+    container_name: todo-dev-front
     environment:
-      - VITE_BACKEND_URL=http://localhost:8000
+      - VITE_BACKEND_URL=http://localhost:8080
     volumes:
       - ./todo-frontend:/usr/src/app/todo-frontend
       - /usr/src/app/node_modules
@@ -82,18 +84,18 @@ services:
   
   dev-nginx:
     depends_on:
-      dev-client:
+      dev-front:
         condition: service_healthy
-      dev-server:
+      dev-backend:
         condition: service_healthy
     image: nginx:stable-alpine
-    container_name: todo-dev-nginx-proxy
+    container_name: todo-dev-nginx
     ports:
-      - 8000:80
+      - 8080:80
     networks:
       - dev-network
     volumes:
-      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s

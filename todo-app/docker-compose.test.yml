@@ -4,7 +4,7 @@ services:
       dockerfile: ./mongodb/Dockerfile
     container_name: todo-test-mongodb
     networks:
-      - todo-test-network
+      - test-network
     environment:
       - MONGO_INITDB_ROOT_USERNAME=the_username
       - MONGO_INITDB_ROOT_PASSWORD=the_password
@@ -20,7 +20,7 @@ services:
     image: redis
     container_name: todo-test-redis
     networks:
-      - todo-test-network
+      - test-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -28,7 +28,7 @@ services:
       retries: 3
       start_period: 30s
 
-  server:
+  backend:
     depends_on:
       mongodb:
         condition: service_healthy
@@ -37,12 +37,13 @@ services:
     build:
       context: ./todo-backend
       dockerfile: Dockerfile
-    container_name: todo-app-server
+    image: todo-backend
+    container_name: todo-backend
     environment:
       MONGO_URL: mongodb://the_username:the_password@mongodb:27017/the_database
       REDIS_URL: redis://redis:6379
     networks:
-      - todo-test-network
+      - test-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 30s
@@ -52,18 +53,19 @@ services:
 
   nginx:
     depends_on:
-      server:
+      backend:
         condition: service_healthy
     build:
       context: ./todo-frontend
       dockerfile: Dockerfile
-    container_name: todo-app-nginx
+    image: todo-front
+    container_name: todo-front
     environment:
-      - VITE_BACKEND_URL=http://localhost:8000
+      - VITE_BACKEND_URL=http://localhost:8080
     networks:
-      - todo-test-network
+      - test-network
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s
@@ -75,14 +77,15 @@ services:
     depends_on:
       nginx:
         condition: service_healthy
-      server:
+      backend:
         condition: service_healthy
     build:
       context: ./todo-tests
       dockerfile: Dockerfile
-    container_name: todo-app-tests
+    image: todo-e2e
+    container_name: todo-e2e
     networks:
-      - todo-test-network
+      - test-network
     environment:
       BASE_URL: http://nginx:80
     volumes:
@@ -91,5 +94,5 @@ services:
       - ./todo-tests/playwright-report:/todo-tests/playwright-report
 
 networks:
-  todo-test-network:
+  test-network:
     driver: bridge
