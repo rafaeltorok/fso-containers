@@ -81,7 +81,7 @@ services:
 
   e2e-test:
     depends_on:
-      client:
+      nginx:
         condition: service_healthy
       server:
         condition: service_healthy
@@ -92,7 +92,7 @@ services:
     networks:
       - todo-test-network
     environment:
-      BASE_URL: http://client:80
+      BASE_URL: http://nginx:80
     volumes:
       # Persists tests results and reports
       - ./todo-tests/test-results:/todo-tests/test-results
