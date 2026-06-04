@@ -34,7 +34,12 @@ Start the development composer orchestration
 docker compose -f ./docker-compose.dev.yml up --build
 ```
 
-Access the Web UI on http://localhost:5173
+Access the Web UI on http://localhost:8000
+
+Cleanup
+```bash
+docker compose -f ./docker-compose.dev.yml down -v
+```
 
 ### Production build
 
@@ -45,49 +50,49 @@ docker compose up --build
 
 Access the Web UI on http://localhost:8000
 
+Cleanup
+```bash
+docker compose down -v
+```
+
 
 ## CRUD operations
 
-Port numbers:
-
-- Development build on port `3000`
-- Production build (through the Nginx reverse proxy) on port `8000`
-
-Server routes:
+**Note**: All backend server requests go through the Nginx reverse proxy on port `8000`.
 
 - Get info about the MONGO_URL, REDIS_URL and visits counter
   ```bash
-  curl -X GET http://localhost:<PORT>/info
+  curl -X GET http://localhost:8000/info
   ```
 
 - Server health check
   ```bash
-  curl -X GET http://localhost:<PORT>/health
+  curl -X GET http://localhost:8000/health
   ```
 
 - Statistics about the total number of todos
   ```bash
-  curl -X GET http://localhost:<PORT>/api/statistics
+  curl -X GET http://localhost:8000/api/statistics
   ```
 
 - GET all todos
   ```bash
-  curl -X GET http://localhost:<PORT>/api/todos
+  curl -X GET http://localhost:8000/api/todos
   ```
 
 - POST a new todo
   ```bash
-  curl -X POST http://localhost:<PORT>/api/todos -H "Content-Type: application/json" --data '{ "text": "Use curl to add a new todo", "done": true }'
+  curl -X POST http://localhost:8000/api/todos -H "Content-Type: application/json" --data '{ "text": "Use curl to add a new todo", "done": true }'
   ```
 
 - PUT (update) a todo
   ```bash
-  curl -X PUT http://localhost:<PORT>/api/todos/:id -H "Content-Type: application/json" --data '{ "done": true }'
+  curl -X PUT http://localhost:8000/api/todos/:id -H "Content-Type: application/json" --data '{ "done": true }'
   ```
 
 - DELETE a todo
   ```bash
-  curl -X DELETE http://localhost:<PORT>/api/todos/:id
+  curl -X DELETE http://localhost:8000/api/todos/:id
   ```
 
 
